@@ -1,0 +1,52 @@
+.search-container {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    background: rgba(17, 24, 39, 0.9);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.06);
+
+    padding: 16px 18px;
+
+    border-radius: 16px;
+
+    backdrop-filter: blur(14px);
+
+    transition: 0.3s ease;
+}
+
+.search-container:focus-within {
+    border-color:
+        rgba(139, 92, 246, 0.45);
+
+    box-shadow:
+        0 0 30px rgba(139, 92, 246, 0.15);
+}
+
+.search-container svg {
+    color: #9CA3AF;
+
+    flex-shrink: 0;
+}
+
+.search-container input {
+    width: 100%;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    color: white;
+
+    font-size: 1rem;
+}
+
+.search-container input::placeholder {
+    color: #6B7280;
+}
+

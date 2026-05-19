@@ -13,6 +13,8 @@ import api from "../../services/api";
 import Loading from "../../components/Loading";
 
 import "./home.css";
+import SearchBar from "../../components/SearchBar";
+import MovieCard from "../../components/MovieCard";
 
 /**
  * URL base das imagens do TMDB
@@ -46,6 +48,11 @@ function Home() {
      * Filmes salvos no localStorage
      */
     const [savedMovies, setSavedMovies] = useState([]);
+
+    /** 
+     * Texto da busca 
+     */
+    const [query, setQuery] = useState("");
 
     /**
      * Busca filmes na API
@@ -201,8 +208,16 @@ function Home() {
 
             </section>
 
+
             {/* FILMES */}
             <section className="movies-section">
+                <SearchBar
+                    value={query}
+                    onChange={(e) =>
+                        setQuery(e.target.value)
+                    }
+                    placeholder="Buscar filmes..."
+                />
 
                 <div className="section-header">
 
@@ -217,76 +232,15 @@ function Home() {
                 </div>
 
                 <div className="movies-grid">
+                    {filmes.map((filme) => (
 
-                    {filmes.map((filme) => {
+                        <MovieCard
+                            key={filme.id}
+                            movie={filme}
+                            saved={isMovieSaved(filme.id)}
+                        />
 
-                        /**
-                         * Verifica se está salvo
-                         */
-                        const saved =
-                            isMovieSaved(filme.id);
-
-                        return (
-
-                            <article
-                                key={filme.id}
-                                className={`movie-card ${saved ? "saved-card" : ""}`}
-                            >
-
-                                {/* TAG SALVO */}
-                                {saved && (
-
-                                    <div className="saved-badge">
-
-                                        <Heart size={14} />
-
-                                        Salvo
-
-                                    </div>
-
-                                )}
-
-                                {/* POSTER */}
-                                <img
-                                    src={`${imagePath}${filme.poster_path}`}
-                                    alt={filme.title}
-                                />
-
-                                {/* INFO */}
-                                <div className="movie-info">
-
-                                    <div className="movie-top">
-
-                                        <strong>
-                                            {filme.title}
-                                        </strong>
-
-                                        <span>
-
-                                            <Star size={14} />
-
-                                            {filme.vote_average?.toFixed(1)}
-
-                                        </span>
-
-                                    </div>
-
-                                    <p>
-                                        {filme.overview}
-                                    </p>
-
-                                    <Link
-                                        to={`/filme/${filme.id}`}
-                                    >
-                                        Ver detalhes
-                                    </Link>
-
-                                </div>
-
-                            </article>
-                        );
-                    })}
-
+                    ))}
                 </div>
 
                 {/* VER MAIS */}
