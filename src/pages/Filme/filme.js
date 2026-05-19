@@ -18,6 +18,7 @@ import BackButton from "../../components/BackButton";
 
 import { formatDate } from "../../utils/formatDate";
 
+import TrailerModal from "../../components/TrailerModal";
 import { toast } from "react-toastify";
 
 import "./filme.css";
@@ -56,6 +57,9 @@ function Filme() {
      */
     const [saved, setSaved] = useState(false);
 
+    const [showTrailer, setShowTrailer] = useState(false);
+    const [trailerKey, setTrailerKey] = useState("");
+
     /**
      * Abre o trailer do filme no YouTube
      */
@@ -69,6 +73,59 @@ function Filme() {
 
         window.open(url, "_blank");
     }
+
+    async function handleOpenTrailer() {
+
+        try {
+
+            const response =
+                await api.get(
+                    `movie/${id}/videos`,
+                    {
+                        params: {
+                            api_key:
+                                process.env.REACT_APP_API_KEY,
+                            language: "pt-BR",
+                        }
+                    }
+                );
+
+            /**
+             * Procura trailer oficial
+             */
+            const trailer =
+                response.data.results.find(
+                    (video) =>
+                        video.type === "Trailer"
+                );
+
+            /**
+             * Se não existir trailer
+             */
+            if (!trailer) {
+
+                toast.error(
+                    "Trailer não encontrado"
+                );
+
+                return;
+            }
+
+            setTrailerKey(trailer.key);
+
+            setShowTrailer(true);
+
+        } catch (error) {
+
+            console.error(error);
+
+            toast.error(
+                "Erro ao carregar trailer"
+            );
+        }
+    }
+
+
 
     /**
      * Salva ou remove filme do localStorage
@@ -298,7 +355,7 @@ function Filme() {
                     <div className="movie-actions">
 
                         {/* TRAILER */}
-                        <button onClick={takeToYouTube}>
+                        <button onClick={handleOpenTrailer}>
 
                             <PlayCircle size={18} />
 
@@ -331,6 +388,20 @@ function Filme() {
                 </div>
 
             </section>
+
+            ```jsx id="s6v1ha"
+            {showTrailer && (
+
+                <TrailerModal
+                    videoKey={trailerKey}
+                    closeModal={() =>
+                        setShowTrailer(false)
+                    }
+                />
+
+            )}
+            ```
+
 
         </main>
     );
