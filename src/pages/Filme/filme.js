@@ -377,7 +377,7 @@ function Filme() {
                 </div>
 
             </section>
-            
+
             {showTrailer && (
 
                 <TrailerModal
@@ -388,9 +388,6 @@ function Filme() {
                 />
 
             )}
-            ```
-
-
         </main>
     );
 }
