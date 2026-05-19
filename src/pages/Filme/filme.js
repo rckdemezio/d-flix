@@ -377,8 +377,7 @@ function Filme() {
                 </div>
 
             </section>
-
-            ```jsx id="s6v1ha"
+            
             {showTrailer && (
 
                 <TrailerModal
