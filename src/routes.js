@@ -5,6 +5,7 @@ import Home from "./pages/Home/home";
 import Filme from "./pages/Filme/filme";
 
 import Header from "./components/Header";
+import NotFound from "./pages/NotFound";
 
 function RoutesApp() {
     return (
@@ -13,6 +14,7 @@ function RoutesApp() {
             <Routes>
                 <Route path="/" element={ <Home /> } />
                 <Route path="/filme/:id" element={ <Filme /> } />
+                <Route path="*" element={ <NotFound /> } />
             </Routes>
         </BrowserRouter>
     );
