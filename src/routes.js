@@ -9,6 +9,9 @@ import NotFound from "./pages/NotFound";
 import Favoritos from "./pages/Favoritos/favoritos";
 import SearchPage from "./pages/Search/search";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function RoutesApp() {
     return (
         <BrowserRouter>
@@ -20,6 +23,20 @@ function RoutesApp() {
                 <Route path="/search" element={<SearchPage />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
+
+            ```jsx id="x83v5z"
+            <ToastContainer
+                position="top-right"
+                autoClose={2500}
+                hideProgressBar={false}
+                newestOnTop={true}
+                closeOnClick
+                pauseOnHover
+                theme="dark"
+            />
+            ```
+
+
         </BrowserRouter>
     );
 }

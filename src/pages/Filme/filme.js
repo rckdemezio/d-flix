@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 
+
+
 import {
     Heart,
     HeartPlus,
@@ -15,6 +17,8 @@ import Loading from "../../components/Loading";
 import BackButton from "../../components/BackButton";
 
 import { formatDate } from "../../utils/formatDate";
+
+import { toast } from "react-toastify";
 
 import "./filme.css";
 
@@ -109,7 +113,7 @@ function Filme() {
             );
 
             setSaved(false);
-
+            toast.info("Filme removido dos favoritos");
             return;
         }
 
@@ -133,6 +137,8 @@ function Filme() {
         );
 
         setSaved(true);
+        toast.success("Filme salvo com sucesso");
+
     }
 
     /**
