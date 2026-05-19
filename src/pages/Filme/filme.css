@@ -154,6 +154,12 @@
 }
 
 .movie-actions button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
     border: none;
     outline: none;
 
@@ -176,6 +182,8 @@
     box-shadow:
         0 0 30px rgba(139, 92, 246, 0.2);
 }
+
+
 
 .movie-actions button:hover {
     transform:
@@ -238,5 +246,19 @@
     .movie-poster img {
         width: 220px;
     }
+}
+
+.secondary.saved {
+    background:
+        linear-gradient(135deg, #EF4444, #DC2626);
+
+    border: none;
+
+    color: white;
+}
+
+.secondary.saved:hover {
+    box-shadow:
+        0 0 30px rgba(239, 68, 68, 0.35);
 }
 

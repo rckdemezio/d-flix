@@ -2,44 +2,63 @@ import { useEffect, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 
+import {
+    Heart,
+    HeartPlus,
+    PlayCircle,
+    Star
+} from "lucide-react";
+
 import api from "../../services/api";
 
 import Loading from "../../components/Loading";
-
-import { formatDate } from "../../utils/formatDate";
 import BackButton from "../../components/BackButton";
 
-import "./filme.css";
-import { Heart, HeartPlus, PlayCircle } from "lucide-react";
+import { formatDate } from "../../utils/formatDate";
 
+import "./filme.css";
+
+/**
+ * URL base das imagens do TMDB
+ */
 const imagePath = "https://image.tmdb.org/t/p/original";
 
 function Filme() {
 
     /**
      * Recupera o ID enviado pela rota
-     * Ex: /filme/123
+     * Exemplo:
+     * /filme/123
      */
     const { id } = useParams();
 
     /**
-     * Hook para navegação
+     * Hook de navegação
      */
     const navigate = useNavigate();
 
     /**
-     * State do filme
+     * State responsável pelos dados do filme
      */
     const [filme, setFilme] = useState({});
 
     /**
-     * Controle de loading
+     * Controle de loading da página
      */
     const [loading, setLoading] = useState(true);
 
+    /**
+     * Controle de filmes salvos
+     */
+    const [saved, setSaved] = useState(false);
+
+    /**
+     * Abre o trailer do filme no YouTube
+     */
     function takeToYouTube() {
 
-        const query = `${filme.title} trailer oficial`;
+        const query =
+            `${filme.title} trailer oficial`;
 
         const url =
             `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
@@ -47,10 +66,77 @@ function Filme() {
         window.open(url, "_blank");
     }
 
+    /**
+     * Salva ou remove filme do localStorage
+     */
+    function handleSaveMovie() {
 
+        /**
+         * Recupera lista salva
+         */
+        const listSaved =
+            localStorage.getItem("@dflix:movies");
+
+        /**
+         * Converte string para array
+         */
+        let savedMovies =
+            JSON.parse(listSaved) || [];
+
+        /**
+         * Verifica se filme já existe
+         */
+        const hasMovie =
+            savedMovies.some(
+                (savedMovie) =>
+                    savedMovie.id === filme.id
+            );
+
+        /**
+         * Remove filme salvo
+         */
+        if (hasMovie) {
+
+            const filteredMovies =
+                savedMovies.filter(
+                    (savedMovie) =>
+                        savedMovie.id !== filme.id
+                );
+
+            localStorage.setItem(
+                "@dflix:movies",
+                JSON.stringify(filteredMovies)
+            );
+
+            setSaved(false);
+
+            return;
+        }
+
+        /**
+         * Adiciona novo filme
+         */
+        savedMovies.push({
+            id: filme.id,
+            title: filme.title,
+            poster_path: filme.poster_path,
+            backdrop_path: filme.backdrop_path,
+            vote_average: filme.vote_average,
+        });
+
+        /**
+         * Salva no navegador
+         */
+        localStorage.setItem(
+            "@dflix:movies",
+            JSON.stringify(savedMovies)
+        );
+
+        setSaved(true);
+    }
 
     /**
-     * Busca os detalhes do filme
+     * Busca detalhes do filme
      */
     useEffect(() => {
 
@@ -58,19 +144,50 @@ function Filme() {
 
             try {
 
-                const response = await api.get(`movie/${id}`, {
-                    params: {
-                        api_key: process.env.REACT_APP_API_KEY,
-                        language: "pt-BR",
+                const response = await api.get(
+                    `movie/${id}`,
+                    {
+                        params: {
+                            api_key:
+                                process.env.REACT_APP_API_KEY,
+                            language: "pt-BR",
+                        }
                     }
-                });
+                );
 
+                /**
+                 * Salva dados do filme
+                 */
                 setFilme(response.data);
+
+                /**
+                 * Recupera lista salva
+                 */
+                const listSaved =
+                    localStorage.getItem("@dflix:movies");
+
+                const savedMovies =
+                    JSON.parse(listSaved) || [];
+
+                /**
+                 * Verifica se filme já está salvo
+                 */
+                const hasMovie =
+                    savedMovies.some(
+                        (savedMovie) =>
+                            savedMovie.id === response.data.id
+                    );
+
+                setSaved(hasMovie);
 
             } catch (error) {
 
                 console.error(error);
 
+                /**
+                 * Redireciona para home
+                 * caso aconteça erro
+                 */
                 navigate("/", {
                     replace: true
                 });
@@ -92,13 +209,11 @@ function Filme() {
         return <Loading />;
     }
 
-
-
     return (
+
         <main className="movie-details">
 
-
-            {/* BACKDROP */}
+            {/* BANNER */}
             <section
                 className="movie-banner"
                 style={{
@@ -124,23 +239,25 @@ function Filme() {
 
                 </div>
 
-                {/* INFORMAÇÕES */}
+                {/* INFO */}
                 <div className="movie-info-content">
 
                     <BackButton />
 
                     <span className="movie-category">
-                        Filme em destaque
+                        🎬 Filme em destaque
                     </span>
 
                     <h1>
                         {filme.title}
                     </h1>
 
+                    {/* METADADOS */}
                     <div className="movie-meta">
 
                         <span>
-                            ⭐ {filme.vote_average?.toFixed(1)}
+                            <Star size={14} />
+                            {filme.vote_average?.toFixed(1)}
                         </span>
 
                         <span>
@@ -148,11 +265,12 @@ function Filme() {
                         </span>
 
                         <span>
-                            {filme.runtime} min
+                            ⏱ {filme.runtime} min
                         </span>
 
                     </div>
 
+                    {/* DESCRIÇÃO */}
                     <p>
                         {filme.overview}
                     </p>
@@ -161,22 +279,45 @@ function Filme() {
                     <div className="genres">
 
                         {filme.genres?.map((genre) => (
+
                             <span key={genre.id}>
                                 {genre.name}
                             </span>
+
                         ))}
 
                     </div>
 
-                    {/* BOTÕES */}
+                    {/* AÇÕES */}
                     <div className="movie-actions">
 
-                        <button onClick={() => takeToYouTube()}>
-                            <PlayCircle /> 
+                        {/* TRAILER */}
+                        <button onClick={takeToYouTube}>
+
+                            <PlayCircle size={18} />
+
+                            Assistir trailer
+
                         </button>
 
-                        <button className="secondary">
-                            <Heart size={18} />
+                        {/* SALVAR */}
+                        <button
+                            className={`secondary ${saved ? "saved" : ""}`}
+                            onClick={handleSaveMovie}
+                        >
+
+                            {saved ? (
+                                <>
+                                    <HeartPlus size={18} />
+                                    Salvo
+                                </>
+                            ) : (
+                                <>
+                                    <Heart size={18} />
+                                    Salvar
+                                </>
+                            )}
+
                         </button>
 
                     </div>
@@ -190,3 +331,4 @@ function Filme() {
 }
 
 export default Filme;
+

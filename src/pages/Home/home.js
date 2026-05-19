@@ -1,25 +1,51 @@
 import { useEffect, useState } from "react";
+
 import { Link } from "react-router-dom";
+
+import {
+    Heart,
+    Play,
+    Star
+} from "lucide-react";
 
 import api from "../../services/api";
 
-import "./home.css";
-
 import Loading from "../../components/Loading";
 
-const imagePath = "https://image.tmdb.org/t/p/original";
+import "./home.css";
+
+/**
+ * URL base das imagens do TMDB
+ */
+const imagePath =
+    "https://image.tmdb.org/t/p/original";
 
 function Home() {
 
+    /**
+     * Lista de filmes
+     */
     const [filmes, setFilmes] = useState([]);
 
+    /**
+     * Controle de loading inicial
+     */
     const [loading, setLoading] = useState(true);
 
-    // Página atual
+    /**
+     * Controle de loading do botão
+     */
+    const [loadingMore, setLoadingMore] = useState(false);
+
+    /**
+     * Página atual da API
+     */
     const [page, setPage] = useState(1);
 
-    // Loading do botão
-    const [loadingMore, setLoadingMore] = useState(false);
+    /**
+     * Filmes salvos no localStorage
+     */
+    const [savedMovies, setSavedMovies] = useState([]);
 
     /**
      * Busca filmes na API
@@ -28,17 +54,20 @@ function Home() {
 
         try {
 
-            const response = await api.get("movie/now_playing", {
-                params: {
-                    api_key: process.env.REACT_APP_API_KEY,
-                    language: "pt-BR",
-                    page: pageNumber,
+            const response = await api.get(
+                "movie/now_playing",
+                {
+                    params: {
+                        api_key:
+                            process.env.REACT_APP_API_KEY,
+                        language: "pt-BR",
+                        page: pageNumber,
+                    }
                 }
-            });
+            );
 
             /**
-             * Se for primeira página:
-             * substitui os filmes
+             * Primeira página
              */
             if (pageNumber === 1) {
 
@@ -47,8 +76,7 @@ function Home() {
             } else {
 
                 /**
-                 * Adiciona os novos filmes
-                 * sem remover os anteriores
+                 * Adiciona novos filmes
                  */
                 setFilmes((prevFilmes) => [
                     ...prevFilmes,
@@ -58,7 +86,10 @@ function Home() {
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "Erro ao carregar filmes:",
+                error
+            );
 
         } finally {
 
@@ -68,16 +99,31 @@ function Home() {
     }
 
     /**
-     * Carrega inicialmente
+     * Busca filmes salvos
+     */
+    function loadSavedMovies() {
+
+        const movies =
+            localStorage.getItem("@dflix:movies");
+
+        setSavedMovies(
+            JSON.parse(movies) || []
+        );
+    }
+
+    /**
+     * Carregamento inicial
      */
     useEffect(() => {
 
         loadFilmes(1);
 
+        loadSavedMovies();
+
     }, []);
 
     /**
-     * Função do botão
+     * Carrega mais filmes
      */
     function handleLoadMore() {
 
@@ -90,13 +136,30 @@ function Home() {
         loadFilmes(nextPage);
     }
 
+    /**
+     * Verifica se filme está salvo
+     */
+    function isMovieSaved(movieId) {
+
+        return savedMovies.some(
+            (movie) => movie.id === movieId
+        );
+    }
+
+    /**
+     * Loading reutilizável
+     */
     if (loading) {
         return <Loading />;
     }
 
+    /**
+     * Filme destaque
+     */
     const destaque = filmes[0];
 
     return (
+
         <main className="home-container">
 
             {/* HERO */}
@@ -113,7 +176,7 @@ function Home() {
                 <div className="hero-content">
 
                     <span className="categoria">
-                        Em Cartaz
+                        Em cartaz
                     </span>
 
                     <h1>
@@ -126,8 +189,10 @@ function Home() {
 
                     <div className="hero-buttons">
 
-                        <Link to={`/filme/${destaque.id}`}>
-                            ▶ Assistir agora
+                        <Link
+                            to={`/filme/${destaque.id}`}
+                        >
+                            <Play />Assistir agora
                         </Link>
 
                     </div>
@@ -139,26 +204,55 @@ function Home() {
             {/* FILMES */}
             <section className="movies-section">
 
-                <h2>
-                    Filmes populares
-                </h2>
+                <div className="section-header">
+
+                    <h2>
+                        Filmes populares
+                    </h2>
+
+                    <span>
+                        {filmes.length} filmes
+                    </span>
+
+                </div>
 
                 <div className="movies-grid">
 
                     {filmes.map((filme) => {
 
+                        /**
+                         * Verifica se está salvo
+                         */
+                        const saved =
+                            isMovieSaved(filme.id);
+
                         return (
 
                             <article
                                 key={filme.id}
-                                className="movie-card"
+                                className={`movie-card ${saved ? "saved-card" : ""}`}
                             >
 
+                                {/* TAG SALVO */}
+                                {saved && (
+
+                                    <div className="saved-badge">
+
+                                        <Heart size={14} />
+
+                                        Salvo
+
+                                    </div>
+
+                                )}
+
+                                {/* POSTER */}
                                 <img
                                     src={`${imagePath}${filme.poster_path}`}
                                     alt={filme.title}
                                 />
 
+                                {/* INFO */}
                                 <div className="movie-info">
 
                                     <div className="movie-top">
@@ -168,7 +262,11 @@ function Home() {
                                         </strong>
 
                                         <span>
-                                            ⭐ {filme.vote_average.toFixed(1)}
+
+                                            <Star size={14} />
+
+                                            {filme.vote_average?.toFixed(1)}
+
                                         </span>
 
                                     </div>
@@ -177,7 +275,9 @@ function Home() {
                                         {filme.overview}
                                     </p>
 
-                                    <Link to={`/filme/${filme.id}`}>
+                                    <Link
+                                        to={`/filme/${filme.id}`}
+                                    >
                                         Ver detalhes
                                     </Link>
 
@@ -189,7 +289,7 @@ function Home() {
 
                 </div>
 
-                {/* BOTÃO */}
+                {/* VER MAIS */}
                 <div className="load-more-container">
 
                     <button
@@ -212,4 +312,3 @@ function Home() {
 }
 
 export default Home;
-

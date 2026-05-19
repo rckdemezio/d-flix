@@ -73,12 +73,20 @@
     line-height: 1.7;
 }
 
+
 .hero-buttons a {
     width: fit-content;
 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
     text-decoration: none;
 
-    background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+    background:
+        linear-gradient(135deg, #8B5CF6, #7C3AED);
 
     color: white;
 
@@ -90,6 +98,8 @@
 
     transition: 0.3s;
 }
+
+
 
 .hero-buttons a:hover {
     transform: scale(1.04);
@@ -172,9 +182,13 @@
 }
 
 .movie-top span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
     color: #FBBF24;
 
-    font-weight: bold;
+    font-weight: 700;
 }
 
 .movie-info p {
@@ -238,7 +252,14 @@
     margin-top: 50px;
 }
 
+
 .load-more-container button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
     border: none;
     outline: none;
 
@@ -262,6 +283,8 @@
         0 0 25px rgba(139, 92, 246, 0.18);
 }
 
+
+
 .load-more-container button:hover {
     transform:
         translateY(-2px)
@@ -277,4 +300,81 @@
     cursor: not-allowed;
 }
 
+/* HEADER DA SEÇÃO */
 
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 30px;
+}
+
+.section-header span {
+    color: #9CA3AF;
+
+    font-size: 0.95rem;
+}
+
+/* CARD SALVO */
+
+.saved-card {
+    border:
+        1px solid rgba(239, 68, 68, 0.35);
+
+    box-shadow:
+        0 0 35px rgba(239, 68, 68, 0.08);
+}
+
+/* BADGE */
+
+.saved-badge {
+    position: absolute;
+
+    top: 14px;
+    right: 14px;
+
+    z-index: 20;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    background:
+        linear-gradient(135deg, #EF4444, #DC2626);
+
+    color: white;
+
+    padding: 8px 12px;
+
+    border-radius: 999px;
+
+    font-size: 0.8rem;
+    font-weight: 700;
+
+    box-shadow:
+        0 0 20px rgba(239, 68, 68, 0.25);
+}
+
+/* NOTA */
+
+.movie-top span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    color: #FBBF24;
+
+    font-weight: 700;
+}
+
+.movie-top span svg {
+    fill: currentColor;
+}
+
+
+button svg,
+a svg,
+span svg {
+    flex-shrink: 0;
+}
