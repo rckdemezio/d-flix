@@ -50,6 +50,60 @@
     gap: 20px;
 }
 
+/* HERO ANIMATION */
+
+.hero {
+    transition:
+        background-image 0.8s ease-in-out;
+}
+
+/* INDICADORES */
+
+.hero-indicators {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 10px;
+}
+
+.hero-indicators button {
+    width: 12px;
+    height: 12px;
+
+    border: none;
+
+    cursor: pointer;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,0.35);
+
+    transition: 0.3s ease;
+}
+
+.hero-indicators button:hover {
+    transform: scale(1.2);
+}
+
+.hero-indicators button.active {
+    width: 34px;
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #8B5CF6,
+            #7C3AED
+        );
+
+    box-shadow:
+        0 0 20px rgba(139,92,246,0.45);
+}
+
 /* CATEGORY */
 
 .categoria {

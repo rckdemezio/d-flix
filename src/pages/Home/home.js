@@ -54,6 +54,11 @@ function Home() {
      */
     const [query, setQuery] = useState("");
 
+    /** 
+     * Hero 
+     */
+    const [currentHero, setCurrentHero] = useState(0);
+
     /**
      * Busca filmes na API
      */
@@ -129,6 +134,27 @@ function Home() {
 
     }, []);
 
+    useEffect(() => {
+
+        if (filmes.length === 0) return;
+
+        const interval = setInterval(() => {
+
+            setCurrentHero((prev) =>
+
+                prev === filmes.length - 1
+                    ? 0
+                    : prev + 1
+            );
+
+        }, 6000);
+
+        return () => clearInterval(interval);
+
+    }, [filmes]);
+
+
+
     /**
      * Carrega mais filmes
      */
@@ -163,9 +189,15 @@ function Home() {
     /**
      * Filme destaque
      */
-    const destaque = filmes[0];
+    const destaque = filmes[currentHero];
+
+
+    if (!destaque) {
+        return <Loading />;
+    }
 
     return (
+
 
         <main className="home-container">
 
@@ -205,6 +237,28 @@ function Home() {
                     </div>
 
                 </div>
+
+                <div className="hero-indicators">
+
+                    {filmes.slice(0, 5).map((_, index) => (
+
+                        <button
+                            key={index}
+                            className={
+                                currentHero === index
+                                    ? "active"
+                                    : ""
+                            }
+                            onClick={() =>
+                                setCurrentHero(index)
+                            }
+                        />
+
+                    ))}
+
+                </div>
+                
+
 
             </section>
 
