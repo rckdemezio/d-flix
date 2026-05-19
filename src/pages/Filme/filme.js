@@ -61,19 +61,8 @@ function Filme() {
     const [trailerKey, setTrailerKey] = useState("");
 
     /**
-     * Abre o trailer do filme no YouTube
+     * Abre o trailer do filme no modal
      */
-    function takeToYouTube() {
-
-        const query =
-            `${filme.title} trailer oficial`;
-
-        const url =
-            `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
-
-        window.open(url, "_blank");
-    }
-
     async function handleOpenTrailer() {
 
         try {
