@@ -1,6 +1,7 @@
 import {
     useEffect,
-    useState
+    useState,
+    useCallback
 } from "react";
 
 import {
@@ -84,7 +85,7 @@ function SearchPage() {
     /**
      * Busca filmes
      */
-    async function loadMovies() {
+    const loadMovies = useCallback(async () => {
 
         try {
 
@@ -115,7 +116,7 @@ function SearchPage() {
 
             setLoading(false);
         }
-    }
+    }, [query, loadMovies, setSearchParams]);
 
     return (
 
