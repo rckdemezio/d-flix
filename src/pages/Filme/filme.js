@@ -245,7 +245,7 @@ function Filme() {
                     <BackButton />
 
                     <span className="movie-category">
-                        🎬 Filme em destaque
+                        Filme em destaque
                     </span>
 
                     <h1>
