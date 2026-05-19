@@ -1,7 +1,6 @@
 import {
     useEffect,
-    useState,
-    useCallback
+    useState
 } from "react";
 
 import {
@@ -16,8 +15,9 @@ import MovieCard from "../../components/MovieCard";
 
 import MovieSkeleton from "../../components/MovieSkeleton";
 
-import "./search.css";
 import BackButton from "../../components/BackButton";
+
+import "./search.css";
 
 function SearchPage() {
 
@@ -70,53 +70,49 @@ function SearchPage() {
         /**
          * Debounce
          */
-        const delay =
-            setTimeout(() => {
+        const delay = setTimeout(() => {
 
-                loadMovies();
+            async function loadMovies() {
 
-            }, 700);
+                try {
+
+                    setLoading(true);
+
+                    const response =
+                        await api.get(
+                            "search/movie",
+                            {
+                                params: {
+                                    api_key:
+                                        process.env.REACT_APP_API_KEY,
+                                    language: "pt-BR",
+                                    query
+                                }
+                            }
+                        );
+
+                    setMovies(
+                        response.data.results
+                    );
+
+                } catch (error) {
+
+                    console.error(error);
+
+                } finally {
+
+                    setLoading(false);
+                }
+            }
+
+            loadMovies();
+
+        }, 700);
 
         return () =>
             clearTimeout(delay);
 
-    }, [query]);
-
-    /**
-     * Busca filmes
-     */
-    const loadMovies = useCallback(async () => {
-
-        try {
-
-            setLoading(true);
-
-            const response =
-                await api.get(
-                    "search/movie",
-                    {
-                        params: {
-                            api_key:
-                                process.env.REACT_APP_API_KEY,
-                            language: "pt-BR",
-                            query
-                        }
-                    }
-                );
-
-            setMovies(
-                response.data.results
-            );
-
-        } catch (error) {
-
-            console.error(error);
-
-        } finally {
-
-            setLoading(false);
-        }
-    }, [query, loadMovies, setSearchParams]);
+    }, [query, setSearchParams]);
 
     return (
 
@@ -124,6 +120,7 @@ function SearchPage() {
 
             {/* HEADER */}
             <div className="search-header">
+
                 <BackButton />
 
                 <h1>
@@ -178,3 +175,4 @@ function SearchPage() {
 }
 
 export default SearchPage;
+
