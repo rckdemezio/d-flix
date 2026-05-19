@@ -24,7 +24,6 @@ function RoutesApp() {
                 <Route path="*" element={<NotFound />} />
             </Routes>
 
-            ```jsx id="x83v5z"
             <ToastContainer
                 position="top-right"
                 autoClose={2500}
@@ -34,7 +33,6 @@ function RoutesApp() {
                 pauseOnHover
                 theme="dark"
             />
-            ```
 
 
         </BrowserRouter>
